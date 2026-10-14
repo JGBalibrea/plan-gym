@@ -356,6 +356,7 @@ function toggle(w,btn){
 function machine(k){const sp=SP[k];if(!sp||!sp.eq)return"";sp.__m=1;let o;try{o=`<svg viewBox="0 -8 170 154" role="img" aria-label="Esquema de la máquina" preserveAspectRatio="xMidYMid meet">${inner(sp,sp.a)}</svg>`}finally{sp.__m=0}return o}
 function frame(k,e){const sp=SP[k];return fig(sp,lerp(sp,sp.a,sp.b,e))}
 SP.prensa_alta=SP.prensa;
+SP.crunch_polea=SP.maq_abs;
 return {html,SP,toggle,frame,machine};
 })();
 
@@ -382,7 +383,7 @@ const EX={
   femoral_sent:{n:"Curl femoral sentado en máquina",k:"maq",f:.3,up:0,c:1,tip:"Ajusta el cojín sobre los tobillos y baja los talones despacio.",},
   prensa_alta:{n:"Prensa de piernas con pies altos y separados",k:"maq",f:.7,up:0,c:0,tip:"Pies arriba en la plataforma y algo más abiertos que los hombros (sirve la prensa horizontal). Baja con control y empuja con los talones; no despegues la zona lumbar del respaldo.",z:"rodilla"},
   adduct:{n:"Aductores en máquina",k:"maq",f:.45,up:0,c:0,tip:"Junta las piernas controlado y vuelve despacio."},
-  crunch_polea:{n:"Crunch en polea alta (de rodillas)",k:"polea",f:.25,up:0,c:0,tip:"Enrolla el tronco hacia abajo; no tires con los brazos."},
+  crunch_polea:{n:"Crunch en máquina de abdominales (sentado)",k:"maq",f:.3,up:0,c:0,tip:"Sentado y con la espalda apoyada, enrolla el tronco hacia delante con los abdominales; no tires con los brazos. Sube despacio."},
   pallof:{n:"Pallof press",k:"polea",f:.1,up:0,c:0,tip:"De lado a la polea, empuja la cuerda al frente sin dejar que el cuerpo gire. Reps por lado."},
   press_db:{n:"Press banca con mancuernas",k:"db",f:.12,up:1,c:1,tip:"Baja las mancuernas hasta la altura del pecho, codos a unos 45° del cuerpo.",z:"hombro"},
   militar_db:{n:"Press militar con mancuernas (sentado)",k:"db",f:.08,up:1,c:1,tip:"Espalda apoyada en el respaldo, sube sin arquear la zona lumbar.",z:"hombro"},
@@ -431,7 +432,7 @@ pajaros:["La misma máquina que las aperturas, pero te sientas mirando al respal
 lateral_maq:["Sentado con almohadillas sobre los codos o antebrazos que se levantan hacia los lados.","lateral raise machine"],
 smith:["Barra guiada por dos raíles verticales con ganchos de seguridad. Te pones debajo de la barra, que va sobre los hombros.","smith machine"],
 prensa_alta:["La misma prensa de piernas del martes (horizontal o inclinada, la que prefieras), pero con los pies colocados en la parte alta de la plataforma y algo separados.","leg press machine"],
-crunch_polea:["Polea alta con cuerda. De rodillas, se enrolla el tronco hacia abajo llevando la cuerda junto a la cabeza.","kneeling cable crunch"],
+crunch_polea:["Máquina de abdominales: sentado con la espalda apoyada y las asas o almohadilla junto al pecho. Se enrolla el tronco hacia delante.","abdominal crunch machine"],
 pallof:["Polea a la altura del pecho con asa o cuerda. De pie y de lado a la polea, se empuja el asa al frente sin girar el cuerpo.","pallof press cable"]
 };
 const MQ_ABS=["Sentado, con una almohadilla sobre el pecho y asas. Se enrolla el tronco hacia delante.","abdominal crunch machine"];
