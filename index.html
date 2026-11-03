@@ -369,11 +369,11 @@ const EX={
   remo_maq:{n:"Remo en máquina con apoyo en el pecho",k:"maq",f:.4,up:1,c:0,tip:"Pecho pegado al apoyo, tira llevando los codos hacia atrás y junta los omóplatos.",z:"espalda"},
   curl_maq:{n:"Curl de bíceps en máquina",k:"maq",f:.25,up:1,c:0,tip:"Codos apoyados en el cojín, sin impulso y bajando despacio."},
   triceps:{n:"Tríceps en máquina (sentado)",k:"maq",f:.3,up:1,c:0,tip:"Espalda apoyada y codos pegados al cuerpo, quietos. Empuja hasta estirar del todo sin bloquear los codos y vuelve despacio."},
-  prensa:{n:"Prensa de piernas",k:"maq",f:.9,up:0,c:1,tip:"No bloquees las rodillas arriba ni despegues la zona lumbar del respaldo.",z:"rodilla"},
+  prensa:{n:"Prensa de piernas",k:"prensa",f:.9,up:0,c:1,tip:"No bloquees las rodillas arriba ni despegues la zona lumbar del respaldo.",z:"rodilla"},
   ext_cuad:{n:"Extensión de cuádriceps",k:"maq",f:.35,up:0,c:1,tip:"Sube controlado y aguanta un segundo arriba.",z:"rodilla"},
   femoral:{n:"Curl femoral tumbado en máquina",k:"maq",f:.3,up:0,c:0,tip:"Movimiento controlado, sin levantar la cadera del banco."},
   abduct:{n:"Abductores en máquina",k:"maq",f:.45,up:0,c:0,tip:"Abre las piernas sin balancear el tronco y vuelve despacio."},
-  gemelos:{n:"Gemelos en prensa (con las puntas de los pies)",k:"maq",f:.65,up:0,c:0,tip:"Apoya solo la parte delantera del pie en la plataforma, con las rodillas casi estiradas pero sin bloquearlas. Empuja con las puntas, pausa 1 s arriba y estira bien abajo.",z:"rodilla"},
+  gemelos:{n:"Gemelos en prensa (con las puntas de los pies)",k:"prensa",f:.65,up:0,c:0,tip:"Apoya solo la parte delantera del pie en la plataforma, con las rodillas casi estiradas pero sin bloquearlas. Empuja con las puntas, pausa 1 s arriba y estira bien abajo.",z:"rodilla"},
   incl_maq:{n:"Press de pecho en máquina con asiento bajo (pecho superior)",k:"maq",f:.4,up:1,c:1,tip:"Baja el asiento para que las asas queden a la altura de la parte alta del pecho. Omóplatos juntos contra el respaldo.",z:"hombro"},
   remo_polea:{n:"Remo en polea baja",k:"polea",f:.45,up:1,c:1,tip:"Pecho alto, tira hacia el ombligo y junta los omóplatos.",z:"espalda"},
   aperturas:{n:"Aperturas en máquina (pec deck)",k:"maq",f:.3,up:1,c:0,tip:"Codos ligeramente flexionados, junta las manos al frente sin encoger los hombros.",z:"hombro"},
@@ -381,7 +381,7 @@ const EX={
   pajaros:{n:"Pájaros en máquina (pec deck inverso)",k:"maq",f:.25,up:1,c:0,tip:"Pecho contra el respaldo, abre los brazos hacia atrás juntando los omóplatos."},
   smith:{n:"Sentadilla en máquina Smith",k:"barra",f:.3,up:0,c:1,tip:"Peso = discos añadidos, sin contar la barra. Pies algo adelantados.",z:"rodilla"},
   femoral_sent:{n:"Curl femoral sentado en máquina",k:"maq",f:.3,up:0,c:1,tip:"Ajusta el cojín sobre los tobillos y baja los talones despacio.",},
-  prensa_alta:{n:"Prensa de piernas con pies altos y separados",k:"maq",f:.7,up:0,c:0,tip:"Pies arriba en la plataforma y algo más abiertos que los hombros (sirve la prensa horizontal). Baja con control y empuja con los talones; no despegues la zona lumbar del respaldo.",z:"rodilla"},
+  prensa_alta:{n:"Prensa de piernas con pies altos y separados",k:"prensa",f:.7,up:0,c:0,tip:"Pies arriba en la plataforma y algo más abiertos que los hombros (sirve la prensa horizontal). Baja con control y empuja con los talones; no despegues la zona lumbar del respaldo.",z:"rodilla"},
   adduct:{n:"Aductores en máquina",k:"maq",f:.45,up:0,c:0,tip:"Junta las piernas controlado y vuelve despacio."},
   crunch_polea:{n:"Crunch en máquina de abdominales (sentado)",k:"maq",f:.3,up:0,c:0,tip:"Sentado y con la espalda apoyada, enrolla el tronco hacia delante con los abdominales; no tires con los brazos. Sube despacio."},
   pallof:{n:"Pallof press",k:"polea",f:.1,up:0,c:0,tip:"De lado a la polea, empuja la cuerda al frente sin dejar que el cuerpo gire. Reps por lado."},
@@ -493,17 +493,21 @@ function stepFor(k,w){if(k==="db")return w<10?1:2;if(k==="db1")return 2;if(k==="
 function roundTo(v,s){return Math.round(v/s)*s}
 // Placas de las máquinas del gimnasio: saltos de 10 lb (4,5 kg), tal como vienen rotuladas
 const LADDER=[4.5,9,14,18,23,27,32,36,41,45,50,54,59,63,68,72,77,81,86,90,95,99,104,108];
-const STACK=k=>k==="maq"||k==="polea";
-function ladIdx(v){let b=0;LADDER.forEach((x,i)=>{if(Math.abs(x-v)<Math.abs(LADDER[b]-v))b=i});return b}
-function shift(k,w,n){if(!STACK(k))return Math.max(0,w+n*stepFor(k,w));return LADDER[Math.max(0,Math.min(LADDER.length-1,ladIdx(w)+n))]}
-function snap(k,v){return STACK(k)?LADDER[ladIdx(v)]:roundTo(v,stepFor(k,v))}
+// Prensa de piernas: placas de 20 lb (9 kg), de 9 a 180 kg
+const LADPR=Array.from({length:20},(_,i)=>9*(i+1));
+const STACK=k=>k==="maq"||k==="polea"||k==="prensa";
+const lad=k=>k==="prensa"?LADPR:LADDER;
+const lbOf=(k,i)=>(i+1)*(k==="prensa"?20:10);
+function ladIdx(v,k){const L=lad(k);let b=0;L.forEach((x,i)=>{if(Math.abs(x-v)<Math.abs(L[b]-v))b=i});return b}
+function shift(k,w,n){if(!STACK(k))return Math.max(0,w+n*stepFor(k,w));const L=lad(k);return L[Math.max(0,Math.min(L.length-1,ladIdx(w,k)+n))]}
+function snap(k,v){return STACK(k)?lad(k)[ladIdx(v,k)]:roundTo(v,stepFor(k,v))}
 function baseWeight(id){
   const e=EX[id],p=S.perfil;if(e.k==="bw")return 0;
   const sex=p.sexo==="m"?(e.up?.6:.75):1;
   const exp={nunca:1,poco:1.15,deporte:1.25,gym:1.4}[p.exp]||1;
   let push=1;if(e.up){if(p.flex<5)push=.85;else if(p.flex>=20)push=1.12}
   const raw=(+p.peso||60)*e.f*sex*exp*push;
-  if(STACK(e.k))return LADDER[Math.max(e.k==="maq"?1:0,ladIdx(raw))];
+  if(STACK(e.k))return lad(e.k)[Math.max(e.k==="maq"?1:0,ladIdx(raw,e.k))];
   const s=stepFor(e.k,raw);const min={db:2,db1:4,maq:10,barra:0,polea:5}[e.k];
   return Math.max(min,roundTo(raw,s));
 }
@@ -543,7 +547,7 @@ function absWeight(uptoKey){
 }
 function cmpKey(a,b){const[aw,ad]=a.split("-").map(Number),[bw,bd]=b.split("-").map(Number);return aw-bw||ad-bd}
 function flexTarget(){const m=+S.perfil.flex||0;return m<5?{t:"Flexiones con manos en un banco",r:8}:{t:"Flexiones",r:Math.max(5,Math.round(m*.6))}}
-function unitLabel(k){return{db:"por mancuerna",db1:"una mancuerna",maq:"en la máquina",barra:"discos añadidos",polea:"en la polea"}[k]||""}
+function unitLabel(k){return{db:"por mancuerna",db1:"una mancuerna",maq:"en la máquina",prensa:"en la máquina",barra:"discos añadidos",polea:"en la polea"}[k]||""}
 function fmt(n){return (Math.round(n*10)/10).toString().replace(".",",")}
 
 /* ---------- Guardado ---------- */
@@ -591,7 +595,7 @@ function renderHoy(){
       const show=snap(e.k,cur*ph.m)||cur;
       rx=`${series} × ${reps}${id==="zancada"||id==="pallof"?" por lado":""}`;
       const base=baseWeight(id);const diff=cur-base;
-      loadHtml=`<div class="load"><span class="kg num">${fmt(show)}<small>kg</small></span><span class="unit">${unitLabel(e.k)}${STACK(e.k)?` · ${(ladIdx(show)+1)*10} lb`:""}</span>${diff>0?`<span class="delta num">+${fmt(diff)} kg desde el inicio</span>`:diff<0?`<span class="delta dn num">${fmt(diff)} kg</span>`:""}</div>`;
+      loadHtml=`<div class="load"><span class="kg num">${fmt(show)}<small>kg</small></span><span class="unit">${unitLabel(e.k)}${STACK(e.k)?` · ${lbOf(e.k,ladIdx(show,e.k))} lb`:""}</span>${diff>0?`<span class="delta num">+${fmt(diff)} kg desde el inicio</span>`:diff<0?`<span class="delta dn num">${fmt(diff)} kg</span>`:""}</div>`;
     }
     const molest=e.z&&S.perfil.molestias.includes(e.z);
     const f=log.fb&&log.fb[id];
